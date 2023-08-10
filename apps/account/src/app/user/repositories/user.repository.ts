@@ -12,7 +12,7 @@ export class UserRepository {
 
   async createUser(user: UserEntity) {
     const newUser = new this.userModel(user);
-    return newUser.save;
+    return newUser.save();
   }
 
   async findUser(email: string) {
