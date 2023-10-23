@@ -1,4 +1,9 @@
-import { IUser, IUserCourses, UserRole } from '@purple-udemy/interfaces';
+import {
+  IUser,
+  IUserCourses,
+  PurchaseState,
+  UserRole,
+} from '@purple-udemy/interfaces';
 import { compare, genSalt, hash } from 'bcryptjs';
 
 export class UserEntity implements IUser {
@@ -16,6 +21,30 @@ export class UserEntity implements IUser {
     this.email = user.email;
     this.role = user.role;
     this.courses = user.courses;
+  }
+
+  public addCourse(courseId: string) {
+    const exist = this.courses.find((c) => c.courseId === courseId); //was c._id in udemy
+    if (exist) {
+      throw new Error('Course is already exist');
+    }
+    this.courses.push({
+      courseId,
+      purchaseState: PurchaseState.Started,
+    });
+  }
+
+  public deleteCourse(courseId: string) {
+    this.courses = this.courses.filter((c) => c.courseId !== courseId);
+  }
+
+  public updateCourseState(courseId: string, state: PurchaseState) {
+    this.courses = this.courses.map((c) => {
+      if (c.courseId === courseId) {
+        c.purchaseState = state;
+      }
+      return c;
+    });
   }
 
   public getPublicProfile() {
